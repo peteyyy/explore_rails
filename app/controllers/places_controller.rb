@@ -3,7 +3,7 @@ class PlacesController < ApplicationController
 
   # GET /places or /places.json
   def index
-    @places = Place.all
+    @places = Place.getTampaPlaces.first(50)
   end
 
   # GET /places/1 or /places/1.json
