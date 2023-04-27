@@ -111,7 +111,7 @@ class PlacesController < ApplicationController
     end
 
     def set_globals
-      @places ||= Place.all.first(50)
+      @places ||= BucketSort.call_sort(Place.where(state: current_user.state).first(50))
       @position ||= session[:position] || 0
       @likes ||= session[:likes] || []
     end

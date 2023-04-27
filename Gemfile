@@ -61,3 +61,4 @@ gem 'devise'
 
 # Tailwind
 gem 'tailwindcss-rails'
+gem 'bootstrap-sass'
