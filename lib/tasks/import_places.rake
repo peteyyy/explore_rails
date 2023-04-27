@@ -7,6 +7,7 @@ namespace :import do
     File.foreach('public/yelp_academic_dataset_business.json') do |json|
       parsed_data = JSON.parse(json, symbolize_names: true)
       Place.create(
+        name: parsed_data[:name],
         business_id: parsed_data[:business_id],
         address: parsed_data[:address],
         city: parsed_data[:city],

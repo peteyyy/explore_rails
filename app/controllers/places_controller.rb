@@ -1,13 +1,49 @@
 class PlacesController < ApplicationController
-  before_action :set_place, only: %i[ show edit update destroy ]
+  # before_action :set_place, only: %i[ show edit update destroy ]
+  before_action :set_globals
 
   # GET /places or /places.json
   def index
-    @places = Place.all.first(50)
+    @places = []
+    @likes.each do |like_id|
+      @places << Place.find(like_id)
+    end
+
   end
 
   # GET /places/1 or /places/1.json
   def show
+    @place = @places[@position]
+    @image = get_image_path
+  end
+
+  def love
+    @place = Place.find(params[:id])
+    @count = @places.count
+
+    user_votes = @place.user_votes + 1
+    @place.update_attribute(:user_votes, user_votes)
+
+    @position += 1
+    @likes << @place.id
+
+    session[:position] = @position
+    session[:likes] = @likes
+
+
+    redirect_to place_path(@place)
+  end
+
+  def hate
+    @place = Place.find(params[:id])
+
+    user_votes = @place.user_votes - 1
+    @place.update_attribute(:user_votes, user_votes)
+
+    @position += 1
+    session[:position] = @position
+
+    redirect_to place_path(@place)
   end
 
   # GET /places/new
@@ -67,4 +103,17 @@ class PlacesController < ApplicationController
     def place_params
       params.require(:place).permit(:name)
     end
+
+    def get_image_path
+      images = Dir.glob("app/assets/images/*.jpg")
+      image_path = images.sample
+      return image_path.sub("app/assets/images/", "")
+    end
+
+    def set_globals
+      @places ||= Place.all.first(50)
+      @position ||= session[:position] || 0
+      @likes ||= session[:likes] || []
+    end
+
 end
