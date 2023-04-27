@@ -4,10 +4,12 @@ class PlacesController < ApplicationController
 
   # GET /places or /places.json
   def index
-    @places = []
+    liked_places = []
     @likes.each do |like_id|
-      @places << Place.find(like_id)
+      liked_places << Place.find(like_id)
     end
+
+    @places = MergeSort.merge_sort_by_user_votes(liked_places)
 
   end
 
@@ -111,7 +113,7 @@ class PlacesController < ApplicationController
     end
 
     def set_globals
-      @places ||= BucketSort.call_sort(Place.where(state: current_user.state).first(50))
+      @places ||= BucketSort.call_sort(Place.where(state: current_user.state).first(150))
       @position ||= session[:position] || 0
       @likes ||= session[:likes] || []
     end
